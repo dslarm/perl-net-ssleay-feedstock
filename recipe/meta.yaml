@@ -9,6 +9,8 @@ package:
 source:
    url: https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-{{ version }}.tar.gz
    sha256: {{ sha256 }}
+   patches:
+    - email-test-format-change.patch  # see: https://github.com/radiator-software/p5-net-ssleay/pull/487
 
 build:
   number: 0
