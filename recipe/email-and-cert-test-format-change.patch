@@ -1,0 +1,86 @@
+From 4068d585875d3ba99da2cbe41f60d0dd4f4290d1 Mon Sep 17 00:00:00 2001
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Date: Wed, 16 Oct 2024 21:48:51 +0200
+Subject: [PATCH 1/3] test: 32_x509_get_cert_info allow single colon.
+
+Starting with 3.4.0 the double colon in emailAddress has been removed.
+Adapt the test to allow a single colon in 3.4.0 and later.
+
+Signed-off-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+---
+ t/local/32_x509_get_cert_info.t | 4 ++++
+ 1 file changed, 4 insertions(+)
+
+diff --git a/t/local/32_x509_get_cert_info.t b/t/local/32_x509_get_cert_info.t
+index 0f7e2d5a..0fd1b689 100644
+--- a/t/local/32_x509_get_cert_info.t
++++ b/t/local/32_x509_get_cert_info.t
+@@ -188,6 +188,10 @@ for my $f (keys (%$dump)) {
+                   ) {
+                       $ext_data =~ s{(othername:) [^, ]+}{$1<unsupported>}g;
+                   }
++                  # Starting with 3.4.0 the double colon in emailAddress has been removed.
++                  if (Net::SSLeay::SSLeay >= 0x30400000) {
++                      $ext_data =~ s{emailAddress::}{emailAddress:};
++                  }
+               }
+               elsif ( $nid == 89 ) {
+                   # The output formatting for certificate policies has a
+
+From eac7ac502b02f44a84a67920e9f634cce71ff335 Mon Sep 17 00:00:00 2001
+From: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+Date: Tue, 18 Feb 2025 18:57:15 +0100
+Subject: [PATCH 2/3] tests: Address another formatting difference in OpenSSL
+ 3.4.1
+
+Since OpenSSL 3.4.1, commit 8a28bca8ee08 ("x509: add a newline after
+printing Full Name") to be exact, there is another new line change.
+
+Adapt the testsuite.
+
+Fixes: #513
+
+Signed-off-by: Sebastian Andrzej Siewior <sebastian@breakpoint.cc>
+---
+ t/local/32_x509_get_cert_info.t | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/t/local/32_x509_get_cert_info.t b/t/local/32_x509_get_cert_info.t
+index 0fd1b689..08316bf9 100644
+--- a/t/local/32_x509_get_cert_info.t
++++ b/t/local/32_x509_get_cert_info.t
+@@ -218,6 +218,9 @@ for my $f (keys (%$dump)) {
+                       # OpenSSL 1.0.0 to 1.1.1:
+                       $ext_data =~ s{(Full Name:\n  )}{\n$1}g;
+                       $ext_data .= "\n";
++                  } elsif ( Net::SSLeay::SSLeay >  0x3040000f ) {
++                      $ext_data =~ s{(\nFull Name:)}{\n$1}g;
++                      $ext_data .= "\n";
+                   }
+               }
+               elsif ( $nid == 126 ) {
+
+From 0556e4ebf492dbe4221d8c4740e2a52fc2ff6a2f Mon Sep 17 00:00:00 2001
+From: Heikki Vatiainen <hvn@radiatorsoftware.com>
+Date: Tue, 22 Apr 2025 16:04:35 +0300
+Subject: [PATCH 3/3] Update Changes for test changes needed by OpenSSL 3.4.0
+ and 3.4.1.
+
+---
+ Changes | 3 +++
+ 1 file changed, 3 insertions(+)
+
+diff --git a/Changes b/Changes
+index 45727a3c..07804341 100644
+--- a/Changes
++++ b/Changes
+@@ -7,6 +7,9 @@ Revision history for Perl extension Net::SSLeay.
+ 	- Update GitHub Actions CI workflow. A number of test jobs
+ 	  were broken because some GitHub runners were discontinued,
+ 	  changes in QEMU setup, changes in Cygwin, etc.
++	- Adjust test 32_x509_get_cert_info.t to match formatting
++	  changes in OpenSSL 3.4.0 and 3.4.1. Thanks to Sebastian
++	  Andrzej Siewior for the patches.
+ 
+ 1.94 2024-01-08
+ 	- New stable release incorporating all changes from developer releases 1.93_01
