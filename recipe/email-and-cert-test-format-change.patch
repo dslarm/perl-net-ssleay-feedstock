@@ -60,27 +60,3 @@ index 0fd1b689..08316bf9 100644
                }
                elsif ( $nid == 126 ) {
 
-From 0556e4ebf492dbe4221d8c4740e2a52fc2ff6a2f Mon Sep 17 00:00:00 2001
-From: Heikki Vatiainen <hvn@radiatorsoftware.com>
-Date: Tue, 22 Apr 2025 16:04:35 +0300
-Subject: [PATCH 3/3] Update Changes for test changes needed by OpenSSL 3.4.0
- and 3.4.1.
-
----
- Changes | 3 +++
- 1 file changed, 3 insertions(+)
-
-diff --git a/Changes b/Changes
-index 45727a3c..07804341 100644
---- a/Changes
-+++ b/Changes
-@@ -7,6 +7,9 @@ Revision history for Perl extension Net::SSLeay.
- 	- Update GitHub Actions CI workflow. A number of test jobs
- 	  were broken because some GitHub runners were discontinued,
- 	  changes in QEMU setup, changes in Cygwin, etc.
-+	- Adjust test 32_x509_get_cert_info.t to match formatting
-+	  changes in OpenSSL 3.4.0 and 3.4.1. Thanks to Sebastian
-+	  Andrzej Siewior for the patches.
- 
- 1.94 2024-01-08
- 	- New stable release incorporating all changes from developer releases 1.93_01
