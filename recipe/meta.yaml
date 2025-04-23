@@ -10,8 +10,9 @@ source:
    url: https://cpan.metacpan.org/authors/id/C/CH/CHRISN/Net-SSLeay-{{ version }}.tar.gz
    sha256: {{ sha256 }}
    patches:
-    - email-and-cert-test-format-change.patch
       # see: https://github.com/radiator-software/p5-net-ssleay/pull/520
+    - email-and-cert-test-format-change.patch
+    - cross-compile.patch
 
 build:
   number: 1

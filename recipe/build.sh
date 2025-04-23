@@ -21,7 +21,7 @@ sed -i.bak "s|^ccflags=.*$|ccflags='${CFLAGS}'|;s|^ld=.*$|ld='${CC}'|;s|^cppflag
 rm -f ${dname}/Config.pm.bak ${dname}/Config_heavy.pl.bak
 
 # Make sure this goes in site
-perl Makefile.PL INSTALLDIRS=vendor NO_PERLLOCAL=1 NO_PACKLIST=1
+perl Makefile.PL INSTALLDIRS=vendor NO_PERLLOCAL=1 NO_PACKLIST=1 CROSS_COMPILATION=${CONDA_BUILD_CROSS_COMPILATION:-}
 # Fix pollution from the perl build environment
 sed -i.bak "s|^LDLOADLIBS = .*$|LDLOADLIBS = -L$PREFIX/lib -lssl -lcrypto -lz -lpthread|;s|/home/conda/feedstock_root/build_artifacts/perl_1550669032175/_build_env|$BUILD_PREFIX|g" Makefile
 make

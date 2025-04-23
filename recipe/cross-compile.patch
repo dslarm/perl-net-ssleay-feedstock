@@ -1,0 +1,40 @@
+Only in b: Changes.orig
+Only in b: Changes.rej
+diff -ru a/Makefile.PL b/Makefile.PL
+--- a/Makefile.PL	2024-01-08 00:43:17
++++ b/Makefile.PL	2025-04-23 19:00:35
+@@ -196,7 +196,8 @@
+         exit MISSING_PREREQ;
+     }
+ 
+-    check_openssl_version($prefix, $exec);
++    if ($ENV{CROSS_COMPILED} ne '1')
++	check_openssl_version($prefix, $exec);
+     my %args = (
+         CCCDLFLAGS => $opts->{cccdlflags},
+         OPTIMIZE => $opts->{optimize},
+Only in b: Makefile.PL~
+diff -ru a/t/local/32_x509_get_cert_info.t b/t/local/32_x509_get_cert_info.t
+--- a/t/local/32_x509_get_cert_info.t	2024-01-04 21:47:24
++++ b/t/local/32_x509_get_cert_info.t	2025-04-23 09:21:59
+@@ -188,6 +188,10 @@
+                   ) {
+                       $ext_data =~ s{(othername:) [^, ]+}{$1<unsupported>}g;
+                   }
++                  # Starting with 3.4.0 the double colon in emailAddress has been removed.
++                  if (Net::SSLeay::SSLeay >= 0x30400000) {
++                      $ext_data =~ s{emailAddress::}{emailAddress:};
++                  }
+               }
+               elsif ( $nid == 89 ) {
+                   # The output formatting for certificate policies has a
+@@ -213,6 +217,9 @@
+                   } elsif ( Net::SSLeay::SSLeay < 0x30000000 ) {
+                       # OpenSSL 1.0.0 to 1.1.1:
+                       $ext_data =~ s{(Full Name:\n  )}{\n$1}g;
++                      $ext_data .= "\n";
++                  } elsif ( Net::SSLeay::SSLeay >  0x3040000f ) {
++                      $ext_data =~ s{(\nFull Name:)}{\n$1}g;
+                       $ext_data .= "\n";
+                   }
+               }
